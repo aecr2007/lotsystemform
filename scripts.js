@@ -1,17 +1,17 @@
 // URLs y configuraciones
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe6BapqzcK7HJwY2MKZa948VLIEQHu2c7YjOKnECtHdUsa1y8JtNHTGf-oq_FwudbK/exec';
+const PROXY_URL = 'https://proxy-web-lwr4.onrender.com/api'; // Usar el proxy
 const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dh9szo3si/upload'; // Reemplaza con tu Cloud Name
 const UPLOAD_PRESET = 'ml_default'; // Reemplaza con tu Upload Preset
 
-// Función para enviar datos al Google Apps Script
+// Función para enviar datos al Google Apps Script a través del proxy
 async function enviarDatos(tipo, datos) {
     try {
-        const response = await fetch(SCRIPT_URL, {
+        const response = await fetch(PROXY_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(datos)
+            body: JSON.stringify({ ...datos, tipo }) // Incluir el tipo de datos en el cuerpo
         });
 
         if (!response.ok) {
@@ -30,7 +30,7 @@ async function enviarDatos(tipo, datos) {
 // Función para cargar categorías dinámicamente
 async function cargarCategorias() {
     try {
-        const response = await fetch(SCRIPT_URL + '?accion=categorias', {
+        const response = await fetch(PROXY_URL + '?accion=categorias', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ async function cargarCategorias() {
 // Función para cargar subcategorías dinámicamente
 async function cargarSubcategorias(categoria) {
     try {
-        const response = await fetch(SCRIPT_URL + '?accion=subcategorias&categoria=' + encodeURIComponent(categoria));
+        const response = await fetch(PROXY_URL + '?accion=subcategorias&categoria=' + encodeURIComponent(categoria));
         if (!response.ok) {
             throw new Error(`Error al cargar subcategorías: ${response.status}`);
         }
