@@ -33,11 +33,35 @@ function obtenerTokenDeAcceso() {
     }
 }
 
-// Función para enviar datos al Google Apps Script
+function validarTokenOAuth(token) {
+    const url = `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`;
+    try {
+        const response = UrlFetchApp.fetch(url);
+        const data = JSON.parse(response.getContentText());
+        
+        // Verificar si el token es válido y tiene los permisos necesarios
+        if (data.error) {
+            console.error('Token inválido:', data.error);
+            return false; // Token inválido
+        }
+
+        // Verificar que el token pertenezca a tu aplicación
+        if (data.audience !== '1053950352838-ndjbmh1d8qdobq9hd83ga6is38pf2one.apps.googleusercontent.com') {
+            console.error('Token no pertenece a esta aplicación');
+            return false;
+        }
+
+        return true; // Token válido
+    } catch (error) {
+        console.error('Error al validar el token:', error);
+        return false;
+    }
+}
+
 async function enviarDatos(tipo, datos) {
     const token = localStorage.getItem('oauth_token');
     if (!token) {
-        iniciarOAuth();
+        iniciarOAuth(); // Redirigir al usuario para obtener el token
         return;
     }
 
@@ -46,7 +70,7 @@ async function enviarDatos(tipo, datos) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}` // Incluir el token en el encabezado
             },
             body: JSON.stringify(datos)
         });
