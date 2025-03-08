@@ -71,12 +71,13 @@ async function cargarCategorias() {
         if (!response.ok) {
             throw new Error(`Error al cargar categorías: ${response.status}`);
         }
-        const categorias = await response.json();
-        console.log('Categorías cargadas:', categorias); // Depuración
+        const categoriasResponse = await response.json(); // Cambiar el nombre de la variable
+
+        console.log('Categorías cargadas:', categoriasResponse); // Depuración
 
         const selectCategoria = document.getElementById('categoria');
         if (selectCategoria) {
-            categorias.forEach(categoria => {
+            categoriasResponse.forEach(categoria => {
                 const option = document.createElement('option');
                 option.value = categoria;
                 option.textContent = categoria;
@@ -89,6 +90,7 @@ async function cargarCategorias() {
         console.error('Error al cargar categorías:', error);
     }
 }
+
 
 // Función para cargar subcategorías dinámicamente
 async function cargarSubcategorias(categoria) {
