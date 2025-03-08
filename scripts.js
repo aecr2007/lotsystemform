@@ -67,17 +67,24 @@ async function enviarDatos(tipo, datos) {
 // Función para cargar categorías dinámicamente
 async function cargarCategorias() {
     try {
-        const response = await fetch(SCRIPT_URL + '?accion=categorias');
+        const response = await fetch(SCRIPT_URL + '?accion=categorias', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
         if (!response.ok) {
             throw new Error(`Error al cargar categorías: ${response.status}`);
         }
-        const categoriasResponse = await response.json(); // Cambiar el nombre de la variable
 
-        console.log('Categorías cargadas:', categoriasResponse); // Depuración
+        const categorias = await response.json();
+        console.log('Categorías cargadas:', categorias); // Depuración
 
         const selectCategoria = document.getElementById('categoria');
         if (selectCategoria) {
-            categoriasResponse.forEach(categoria => {
+            categorias.forEach(categoria => {
                 const option = document.createElement('option');
                 option.value = categoria;
                 option.textContent = categoria;
