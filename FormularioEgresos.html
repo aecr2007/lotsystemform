@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Formaulario Egresos</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <div class="form-container">
+        <img src="img/logolot_big.png" alt="Logo">
+        <h2>Formulario de Egresos</h2>
+
+        <form id="egresosForm">
+            <!-- Campo oculto para identificar el formulario -->
+            <input type="hidden" name="tipo" value="egresos">
+
+            <!-- Método de pago -->
+            <div class="form-group">
+                <label for="metodo_pago">Método de pago:</label>
+                <select id="metodo_pago" name="metodo_pago" required>
+                    <option value="bs">Bolívares</option>
+                    <option value="usd">Dólares</option>
+                </select>
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" required></textarea>
+            </div>
+
+            <!-- Categoría -->
+            <div class="form-group">
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required>
+                    <!-- Las opciones se cargarán dinámicamente -->
+                </select>
+            </div>
+
+            <!-- Subcategoría -->
+            <div class="form-group">
+                <label for="subcategoria">Subcategoría:</label>
+                <select id="subcategoria" name="subcategoria" required>
+                    <!-- Las opciones se cargarán dinámicamente -->
+                </select>
+            </div>
+
+            <!-- Monto -->
+            <div class="form-group">
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" required>
+            </div>
+
+            <!-- Adjuntar imagen (opcional) -->
+            <div class="form-group">
+                <label for="imagen">Adjuntar imagen (opcional):</label>
+                <input type="file" id="imagen" name="imagen" accept="image/*">
+            </div>
+
+            <!-- Fecha -->
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <select id="fecha" name="fecha" required>
+                    <option value="hoy">Hoy</option>
+                    <option value="ayer">Ayer</option>
+                    <option value="personalizado">Personalizado</option>
+                </select>
+            </div>
+
+            <!-- Botón de enviar -->
+            <div class="form-group">
+                <button type="submit">Enviar</button>
+            </div>
+        </form>
+    </div>
+
+
+     <script src="scripts.js"></script>
+</body>
+ 
+
+</html>
+
