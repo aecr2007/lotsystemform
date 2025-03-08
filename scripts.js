@@ -1,76 +1,15 @@
 // URLs y configuraciones
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwaSyD_5v8kiIL999BEJF2IWFCoSH386WscIE1nw56awCaX1lkWdc7ofIV46rpfjos/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe6BapqzcK7HJwY2MKZa948VLIEQHu2c7YjOKnECtHdUsa1y8JtNHTGf-oq_FwudbK/exec';
 const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dh9szo3si/upload'; // Reemplaza con tu Cloud Name
 const UPLOAD_PRESET = 'ml_default'; // Reemplaza con tu Upload Preset
 
-// Credenciales de OAuth 2.0 (extraídas del archivo JSON)
-const CLIENT_ID = '1053950352838-ndjbmh1d8qdobq9hd83ga6is38pf2one.apps.googleusercontent.com';
-const REDIRECT_URI = 'https://lotsystemform.onrender.com';
-
-// Función para iniciar el flujo de OAuth 2.0
-function iniciarOAuth() {
-    const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
-    const params = {
-        client_id: CLIENT_ID,
-        redirect_uri: REDIRECT_URI,
-        response_type: 'token',
-        scope: 'https://www.googleapis.com/auth/spreadsheets',
-        include_granted_scopes: 'true',
-        state: 'pass-through-value'
-    };
-    const url = oauth2Endpoint + '?' + new URLSearchParams(params).toString();
-    window.location.href = url;
-}
-
-// Función para obtener el token de acceso desde la URL
-function obtenerTokenDeAcceso() {
-    const fragmento = window.location.hash.substring(1);
-    const params = new URLSearchParams(fragmento);
-    const token = params.get('access_token');
-    if (token) {
-        localStorage.setItem('oauth_token', token); // Guarda el token en localStorage
-        console.log('Token de acceso:', token);
-    }
-}
-
-function validarTokenOAuth(token) {
-    const url = `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`;
-    try {
-        const response = UrlFetchApp.fetch(url);
-        const data = JSON.parse(response.getContentText());
-        
-        // Verificar si el token es válido y tiene los permisos necesarios
-        if (data.error) {
-            console.error('Token inválido:', data.error);
-            return false; // Token inválido
-        }
-
-        // Verificar que el token pertenezca a tu aplicación
-        if (data.audience !== '1053950352838-ndjbmh1d8qdobq9hd83ga6is38pf2one.apps.googleusercontent.com') {
-            console.error('Token no pertenece a esta aplicación');
-            return false;
-        }
-
-        return true; // Token válido
-    } catch (error) {
-        console.error('Error al validar el token:', error);
-        return false;
-    }
-}
-
+// Función para enviar datos al Google Apps Script
 async function enviarDatos(tipo, datos) {
-    const token = localStorage.getItem('oauth_token');
-    if (!token) {
-        iniciarOAuth(); // Redirigir al usuario para obtener el token
-        return;
-    }
-
     try {
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Incluir el token en el encabezado
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(datos)
         });
@@ -121,7 +60,6 @@ async function cargarCategorias() {
         console.error('Error al cargar categorías:', error);
     }
 }
-
 
 // Función para cargar subcategorías dinámicamente
 async function cargarSubcategorias(categoria) {
@@ -215,7 +153,6 @@ document.getElementById('ingresosForm')?.addEventListener('submit', async functi
 
 // Cargar categorías al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
-    obtenerTokenDeAcceso(); // Obtener el token de acceso si está en la URL
     cargarCategorias();
 
     const selectCategoria = document.getElementById('categoria');
