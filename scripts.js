@@ -3,9 +3,11 @@ const PROXY_URL = 'https://proxy-web-lwr4.onrender.com/api'; // Usar el proxy
 const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dh9szo3si/upload'; // Reemplaza con tu Cloud Name
 const UPLOAD_PRESET = 'ml_default'; // Reemplaza con tu Upload Preset
 
+
 // Función para enviar datos al Google Apps Script a través del proxy
 async function enviarDatos(tipo, datos) {
     try {
+        console.log('Enviando datos al proxy:', { tipo, datos }); // Depuración
         const response = await fetch(PROXY_URL, {
             method: 'POST',
             headers: {
@@ -14,12 +16,14 @@ async function enviarDatos(tipo, datos) {
             body: JSON.stringify({ ...datos, tipo }) // Incluir el tipo de datos en el cuerpo
         });
 
+        console.log('Respuesta del proxy:', response.status, response.statusText); // Depuración
+
         if (!response.ok) {
             throw new Error(`Error en el servidor: ${response.status}`);
         }
 
         const result = await response.json();
-        console.log('Datos enviados correctamente:', result);
+        console.log('Datos enviados correctamente:', result); // Depuración
         return result;
     } catch (error) {
         console.error('Error al enviar datos:', error);
@@ -30,6 +34,7 @@ async function enviarDatos(tipo, datos) {
 // Función para cargar categorías dinámicamente
 async function cargarCategorias() {
     try {
+        console.log('Cargando categorías...'); // Depuración
         const response = await fetch(PROXY_URL + '?accion=categorias', {
             method: 'GET',
             headers: {
@@ -37,6 +42,8 @@ async function cargarCategorias() {
                 'Accept': 'application/json'
             }
         });
+
+        console.log('Respuesta del proxy:', response.status, response.statusText); // Depuración
 
         if (!response.ok) {
             throw new Error(`Error al cargar categorías: ${response.status}`);
