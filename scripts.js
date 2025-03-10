@@ -3,7 +3,6 @@ const PROXY_URL = 'https://proxy-web-lwr4.onrender.com/api'; // Usar el proxy
 const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dh9szo3si/upload'; // Reemplaza con tu Cloud Name
 const UPLOAD_PRESET = 'ml_default'; // Reemplaza con tu Upload Preset
 
-
 // Función para enviar datos al Google Apps Script a través del proxy
 async function enviarDatos(tipo, datos) {
     try {
@@ -68,6 +67,7 @@ async function cargarCategorias() {
     }
 }
 
+// Función para cargar subcategorías dinámicamente
 async function cargarSubcategorias(categoria) {
     try {
         const response = await fetch(PROXY_URL + '?accion=subcategorias&categoria=' + encodeURIComponent(categoria));
@@ -106,6 +106,7 @@ async function cargarSubcategorias(categoria) {
         console.error('Error al cargar subcategorías:', error);
     }
 }
+
 // Función para subir imágenes a Cloudinary
 async function uploadImageToCloudinary(file) {
     const formData = new FormData();
@@ -130,51 +131,47 @@ async function uploadImageToCloudinary(file) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    cargarCategorias();
+// Evento para enviar el formulario de egresos
+document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-    document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
-        e.preventDefault();
+    const formData = new FormData(this);
+    const datos = Object.fromEntries(formData.entries());
 
-        const formData = new FormData(this);
-        const datos = Object.fromEntries(formData.entries());
+    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
 
-        console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
-
-        try {
-            const resultado = await enviarDatos('egresos', datos);
-            alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
-        } catch (error) {
-            alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
-        }
-    });
-
-    document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const imagenInput = document.getElementById('imagen');
-        const datos = Object.fromEntries(formData.entries());
-
-        try {
-            if (imagenInput?.files.length > 0) {
-                const imagenUrl = await uploadImageToCloudinary(imagenInput.files[0]);
-                datos.imagen_url = imagenUrl;
-            }
-
-            const resultado = await enviarDatos('ingresos', datos);
-            alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
-            this.reset(); // Limpiar el formulario
-        } catch (error) {
-            alert('❌ Hubo un problema al enviar los datos.');
-        }
-    });
-
-    document.getElementById('categoria')?.addEventListener('change', function () {
-        cargarSubcategorias(this.value);
-    });
+    try {
+        const resultado = await enviarDatos('egresos', datos);
+        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
+        this.reset(); // Limpiar el formulario
+        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
+    } catch (error) {
+        alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
+    }
 });
 
+// Evento para enviar el formulario de ingresos
+document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const imagenInput = document.getElementById('imagen');
+    const datos = Object.fromEntries(formData.entries());
+
+    try {
+        if (imagenInput?.files.length > 0) {
+            const imagenUrl = await uploadImageToCloudinary(imagenInput.files[0]);
+            datos.imagen_url = imagenUrl;
+        }
+
+        const resultado = await enviarDatos('ingresos', datos);
+        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
+        this.reset(); // Limpiar el formulario
+        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
+    } catch (error) {
+        alert('❌ Hubo un problema al enviar los datos.');
+    }
+});
 
 // Cargar categorías al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
@@ -191,33 +188,33 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const fechaSelect = document.getElementById('fecha');
-    const fechaRealInput = document.getElementById('fecha_real');
-    const fechaPersonalizadaContainer = document.getElementById('fecha_personalizada_container');
-    const fechaPersonalizadaInput = document.getElementById('fecha_personalizada');
+// Manejo de fechas
+document.addEventListener("DOMContentLoaded", function () {
+    const fechaSelect = document.getElementById("fecha");
+    const fechaRealInput = document.getElementById("fecha_real");
+    const fechaPersonalizadaContainer = document.getElementById("fecha_personalizada_container");
+    const fechaPersonalizadaInput = document.getElementById("fecha_personalizada");
 
-    fechaSelect.addEventListener('change', function () {
-        const fechaSeleccionada = this.value;
+    fechaSelect.addEventListener("change", function () {
+        const hoy = new Date();
+        let fechaFormateada = "";
 
-        if (fechaSeleccionada === 'hoy') {
-            const hoy = new Date();
-            const fechaFormateada = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
-            fechaRealInput.value = fechaFormateada;
-            fechaPersonalizadaContainer.style.display = 'none';
-        } else if (fechaSeleccionada === 'ayer') {
-            const ayer = new Date();
-            ayer.setDate(ayer.getDate() - 1);
-            const fechaFormateada = `${String(ayer.getDate()).padStart(2, '0')}/${String(ayer.getMonth() + 1).padStart(2, '0')}/${ayer.getFullYear()}`;
-            fechaRealInput.value = fechaFormateada;
-            fechaPersonalizadaContainer.style.display = 'none';
-        } else if (fechaSeleccionada === 'personalizado') {
-            fechaPersonalizadaContainer.style.display = 'block';
-            fechaRealInput.value = ''; // Limpiar el valor hasta que el usuario ingrese la fecha
+        if (this.value === "hoy") {
+            fechaFormateada = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
+            fechaPersonalizadaContainer.style.display = "none"; // Ocultar campo personalizado
+        } else if (this.value === "ayer") {
+            const ayer = new Date(hoy);
+            ayer.setDate(hoy.getDate() - 1);
+            fechaFormateada = `${String(ayer.getDate()).padStart(2, '0')}/${String(ayer.getMonth() + 1).padStart(2, '0')}/${ayer.getFullYear()}`;
+            fechaPersonalizadaContainer.style.display = "none";
+        } else if (this.value === "personalizado") {
+            fechaPersonalizadaContainer.style.display = "block"; // Mostrar campo personalizado
         }
+
+        fechaRealInput.value = fechaFormateada;
     });
 
-    fechaPersonalizadaInput.addEventListener('input', function () {
-        fechaRealInput.value = this.value; // Actualizar el campo oculto con la fecha personalizada
+    fechaPersonalizadaInput.addEventListener("input", function () {
+        fechaRealInput.value = this.value; // Guardar la fecha personalizada en `fecha_real`
     });
 });
