@@ -65,10 +65,9 @@
                 <input type="file" id="imagen" name="imagen" accept="image/*">
             </div>
 
-            <!-- Fecha -->
-            <div class="form-group">
+ <div class="form-group">
     <label for="fecha">Fecha:</label>
-    <select id="fecha" required>
+    <select id="fecha" name="fecha" required>
         <option value="hoy">Hoy</option>
         <option value="ayer">Ayer</option>
         <option value="personalizado">Personalizado</option>
@@ -78,9 +77,8 @@
 
 <div class="form-group" id="fecha_personalizada_container" style="display: none;">
     <label for="fecha_personalizada">Fecha (dd/mm/aaaa):</label>
-    <input type="date" id="fecha_personalizada">
+    <input type="date" id="fecha_personalizada" name="fecha_personalizada">
 </div>
-
 
             <!-- Botón de enviar -->
             <div class="form-group">

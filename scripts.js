@@ -131,47 +131,7 @@ async function uploadImageToCloudinary(file) {
     }
 }
 
-// Evento para enviar el formulario de egresos
-document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
-    e.preventDefault();
 
-    const formData = new FormData(this);
-    const datos = Object.fromEntries(formData.entries());
-
-    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
-
-    try {
-        const resultado = await enviarDatos('egresos', datos);
-        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
-        this.reset(); // Limpiar el formulario
-        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
-    } catch (error) {
-        alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
-    }
-});
-
-// Evento para enviar el formulario de ingresos
-document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-    const imagenInput = document.getElementById('imagen');
-    const datos = Object.fromEntries(formData.entries());
-
-    try {
-        if (imagenInput?.files.length > 0) {
-            const imagenUrl = await uploadImageToCloudinary(imagenInput.files[0]);
-            datos.imagen_url = imagenUrl;
-        }
-
-        const resultado = await enviarDatos('ingresos', datos);
-        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
-        this.reset(); // Limpiar el formulario
-        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
-    } catch (error) {
-        alert('❌ Hubo un problema al enviar los datos.');
-    }
-});
 
 // Cargar categorías al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
@@ -215,6 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return `${String(fecha.getDate()).padStart(2, '0')}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${fecha.getFullYear()}`;
     }
 
+    // Actualizar fecha_real cuando cambia la selección
     fechaSelect.addEventListener("change", function () {
         const hoy = new Date();
 
@@ -232,27 +193,64 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Actualizar fecha_real cuando se ingresa una fecha personalizada
     fechaPersonalizadaInput.addEventListener("input", function () {
         if (fechaSelect.value === "personalizado") {
-            fechaRealInput.value = this.value.split("-").reverse().join("/"); // Formato dd/mm/yyyy
+            const fecha = new Date(this.value);
+            fechaRealInput.value = obtenerFechaFormateada(fecha);
         }
     });
 
-    // Asegurar que se envíe la fecha correcta si está vacía
+    // Verificar que la fecha no esté vacía antes de enviar el formulario
     document.querySelector("form").addEventListener("submit", function (e) {
         if (!fechaRealInput.value) {
             alert("Por favor, selecciona una fecha válida.");
             e.preventDefault();
+        } else {
+            console.log("Fecha enviada:", fechaRealInput.value); // Depuración
         }
     });
 });
 
-form.addEventListener("submit", function (e) {
-    console.log("Fecha enviada:", fechaRealInput.value);
 
-    if (!fechaRealInput.value) {
-        alert("Error: La fecha no puede estar vacía.");
-        e.preventDefault();
-        return;
+// Evento para enviar el formulario de egresos
+document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const datos = Object.fromEntries(formData.entries());
+
+    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
+
+    try {
+        const resultado = await enviarDatos('egresos', datos);
+        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
+        this.reset(); // Limpiar el formulario
+        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
+    } catch (error) {
+        alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
+    }
+});
+
+// Evento para enviar el formulario de ingresos
+document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const imagenInput = document.getElementById('imagen');
+    const datos = Object.fromEntries(formData.entries());
+
+    try {
+        if (imagenInput?.files.length > 0) {
+            const imagenUrl = await uploadImageToCloudinary(imagenInput.files[0]);
+            datos.imagen_url = imagenUrl;
+        }
+
+        const resultado = await enviarDatos('ingresos', datos);
+        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
+        this.reset(); // Limpiar el formulario
+        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
+    } catch (error) {
+        alert('❌ Hubo un problema al enviar los datos.');
     }
 });
