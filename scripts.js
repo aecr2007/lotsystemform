@@ -68,7 +68,6 @@ async function cargarCategorias() {
     }
 }
 
-// Función para cargar subcategorías dinámicamente
 async function cargarSubcategorias(categoria) {
     try {
         const response = await fetch(PROXY_URL + '?accion=subcategorias&categoria=' + encodeURIComponent(categoria));
@@ -83,12 +82,23 @@ async function cargarSubcategorias(categoria) {
             // Limpiar opciones anteriores
             selectSubcategoria.innerHTML = '';
 
-            subcategorias.forEach(subcategoria => {
+            // Si no hay subcategorías, agregar una opción por defecto
+            if (subcategorias.length === 0) {
                 const option = document.createElement('option');
-                option.value = subcategoria;
-                option.textContent = subcategoria;
+                option.value = '';
+                option.textContent = 'No hay subcategorías';
                 selectSubcategoria.appendChild(option);
-            });
+                selectSubcategoria.disabled = true; // Deshabilitar el select si no hay subcategorías
+            } else {
+                // Si hay subcategorías, agregarlas al select
+                subcategorias.forEach(subcategoria => {
+                    const option = document.createElement('option');
+                    option.value = subcategoria;
+                    option.textContent = subcategoria;
+                    selectSubcategoria.appendChild(option);
+                });
+                selectSubcategoria.disabled = false; // Habilitar el select si hay subcategorías
+            }
         } else {
             console.error('El elemento con ID "subcategoria" no existe en el DOM.');
         }
@@ -96,7 +106,6 @@ async function cargarSubcategorias(categoria) {
         console.error('Error al cargar subcategorías:', error);
     }
 }
-
 // Función para subir imágenes a Cloudinary
 async function uploadImageToCloudinary(file) {
     const formData = new FormData();
@@ -171,4 +180,35 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         console.error('El elemento con ID "categoria" no existe en el DOM.');
     }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const fechaSelect = document.getElementById('fecha');
+    const fechaRealInput = document.getElementById('fecha_real');
+    const fechaPersonalizadaContainer = document.getElementById('fecha_personalizada_container');
+    const fechaPersonalizadaInput = document.getElementById('fecha_personalizada');
+
+    fechaSelect.addEventListener('change', function () {
+        const fechaSeleccionada = this.value;
+
+        if (fechaSeleccionada === 'hoy') {
+            const hoy = new Date();
+            const fechaFormateada = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
+            fechaRealInput.value = fechaFormateada;
+            fechaPersonalizadaContainer.style.display = 'none';
+        } else if (fechaSeleccionada === 'ayer') {
+            const ayer = new Date();
+            ayer.setDate(ayer.getDate() - 1);
+            const fechaFormateada = `${String(ayer.getDate()).padStart(2, '0')}/${String(ayer.getMonth() + 1).padStart(2, '0')}/${ayer.getFullYear()}`;
+            fechaRealInput.value = fechaFormateada;
+            fechaPersonalizadaContainer.style.display = 'none';
+        } else if (fechaSeleccionada === 'personalizado') {
+            fechaPersonalizadaContainer.style.display = 'block';
+            fechaRealInput.value = ''; // Limpiar el valor hasta que el usuario ingrese la fecha
+        }
+    });
+
+    fechaPersonalizadaInput.addEventListener('input', function () {
+        fechaRealInput.value = this.value; // Actualizar el campo oculto con la fecha personalizada
+    });
 });
