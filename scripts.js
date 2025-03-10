@@ -164,23 +164,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const fechaPersonalizadaContainer = document.getElementById("fecha_personalizada_container");
     const fechaPersonalizadaInput = document.getElementById("fecha_personalizada");
 
-    // Función para formatear la fecha como dd/mm/aaaa
-    function obtenerFechaFormateada(fecha) {
-        return `${String(fecha.getDate()).padStart(2, '0')}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${fecha.getFullYear()}`;
-    }
-
     // Función para actualizar la fecha_real según la selección
     function actualizarFechaReal() {
         const hoy = new Date();
         let nuevaFecha = "";
 
         if (fechaSelect.value === "hoy") {
-            nuevaFecha = obtenerFechaFormateada(hoy);
+            nuevaFecha = hoy.toISOString().split('T')[0]; // Formato aaaa-mm-dd
             fechaPersonalizadaContainer.style.display = "none";
         } else if (fechaSelect.value === "ayer") {
             const ayer = new Date(hoy);
             ayer.setDate(hoy.getDate() - 1);
-            nuevaFecha = obtenerFechaFormateada(ayer);
+            nuevaFecha = ayer.toISOString().split('T')[0]; // Formato aaaa-mm-dd
             fechaPersonalizadaContainer.style.display = "none";
         } else if (fechaSelect.value === "personalizado") {
             fechaPersonalizadaContainer.style.display = "block";
@@ -196,8 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Actualiza fecha_real con la fecha personalizada si se ingresa
     fechaPersonalizadaInput.addEventListener("input", function () {
         if (fechaSelect.value === "personalizado" && this.value) {
-            const fecha = new Date(this.value + "T00:00:00"); // Evita desfase horario
-            fechaRealInput.value = obtenerFechaFormateada(fecha);
+            fechaRealInput.value = this.value; // Usar directamente el valor del campo date (formato aaaa-mm-dd)
         }
     });
 
@@ -208,24 +202,6 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault();
         }
     });
-
-    // Envío del formulario
-    form.addEventListener("submit", function (e) {
-        e.preventDefault(); // Evita el envío automático del formulario
-
-        // Verifica si la fecha está correctamente definida
-        console.log("Fecha a enviar:", fechaRealInput.value);
-
-        const formData = new FormData(form);
-
-        fetch(form.action, {
-            method: "POST",
-            body: formData,
-        })
-        .then(response => response.text())
-        .then(data => console.log("Respuesta:", data))
-        .catch(error => console.error("Error:", error));
-    });
 });
 
 document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
@@ -234,9 +210,9 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
     // Crear un objeto con los datos del formulario
     const datos = {
         tipo: 'egresos',
-        fecha_real: document.getElementById('fecha_real').value,
+        fecha_real: document.getElementById('fecha_real').value, // Formato aaaa-mm-dd
         descripcion: document.getElementById('descripcion').value,
-        vendedor: document.getElementById('vendedor').value, // Aquí está el campo
+        vendedor: document.getElementById('vendedor').value,
         categoria: document.getElementById('categoria').value,
         subcategoria: document.getElementById('subcategoria').value,
         monto: document.getElementById('monto').value,
@@ -244,7 +220,7 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
         imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
     };
 
-    console.log('Datos antes de enviar:', datos); // Verifica que "vendedor" esté presente
+    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté en formato aaaa-mm-dd
 
     try {
         const resultado = await enviarDatos('egresos', datos);
@@ -262,15 +238,15 @@ document.getElementById('ingresosForm')?.addEventListener('submit', async functi
     // Crear un objeto con los datos del formulario
     const datos = {
         tipo: 'ingresos',
-        fecha_real: document.getElementById('fecha_real').value,
+        fecha_real: document.getElementById('fecha_real').value, // Formato aaaa-mm-dd
         descripcion: document.getElementById('descripcion').value,
-        codigoVendedor: document.getElementById('codigoVendedor').value, // Aquí está el campo
+        codigoVendedor: document.getElementById('codigoVendedor').value,
         monto: document.getElementById('monto').value,
         metodo_pago: document.getElementById('metodo_pago').value,
         imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
     };
 
-    console.log('Datos antes de enviar:', datos); // Verifica que "codigoVendedor" esté presente
+    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté en formato aaaa-mm-dd
 
     try {
         const resultado = await enviarDatos('ingresos', datos);
