@@ -211,7 +211,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
+document.querySelector("form").addEventListener("submit", function (e) {
+    console.log("Fecha a enviar:", fechaRealInput.value);
+});
 
 
 // Evento para enviar el formulario de egresos
