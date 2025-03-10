@@ -33,6 +33,11 @@
             </div>
 
             <div class="form-group">
+                <label for="codigoVendedor">Código del vendedor:</label>
+                <input type="text" id="codigoVendedor" name="codigoVendedor" required>
+            </div>
+
+            <div class="form-group">
                 <label for="monto">Monto:</label>
                 <input type="number" id="monto" name="monto" required>
             </div>
@@ -42,27 +47,26 @@
                 <input type="file" id="imagen" name="imagen" accept="image/*">
             </div>
 
-        <div class="form-group">
-    <label for="fecha">Fecha:</label>
-    <select id="fecha" required>
-        <option value="hoy">Hoy</option>
-        <option value="ayer">Ayer</option>
-        <option value="personalizado">Personalizado</option>
-    </select>
-    <input type="hidden" id="fecha_real" name="fecha_real"> <!-- Aquí se almacena la fecha correcta -->
-</div>
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <select id="fecha" required>
+                    <option value="hoy">Hoy</option>
+                    <option value="ayer">Ayer</option>
+                    <option value="personalizado">Personalizado</option>
+                </select>
+                <input type="hidden" id="fecha_real" name="fecha_real">
+            </div>
 
-<div class="form-group" id="fecha_personalizada_container" style="display: none;">
-    <label for="fecha_personalizada">Fecha (dd/mm/aaaa):</label>
-    <input type="date" id="fecha_personalizada" name="fecha_personalizada">
-</div>
+            <div class="form-group" id="fecha_personalizada_container" style="display: none;">
+                <label for="fecha_personalizada">Fecha (dd/mm/aaaa):</label>
+                <input type="date" id="fecha_personalizada" name="fecha_personalizada">
+            </div>
 
             <div class="form-group">
                 <button type="submit">Enviar</button>
             </div>
         </form>
     </div>
- <script src="scripts.js"></script>
-    </body>
-
+    <script src="scripts.js"></script>
+</body>
 </html>

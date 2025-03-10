@@ -7,6 +7,12 @@ const UPLOAD_PRESET = 'ml_default'; // Reemplaza con tu Upload Preset
 async function enviarDatos(tipo, datos) {
     try {
         console.log('Enviando datos al proxy:', { tipo, datos }); // Depuración
+
+        // Asegúrate de que fecha_real esté presente en los datos
+        if (!datos.fecha_real) {
+            throw new Error('El campo fecha_real no está definido.');
+        }
+
         const response = await fetch(PROXY_URL, {
             method: 'POST',
             headers: {
@@ -29,6 +35,7 @@ async function enviarDatos(tipo, datos) {
         throw error;
     }
 }
+
 
 // Función para cargar categorías dinámicamente
 async function cargarCategorias() {
