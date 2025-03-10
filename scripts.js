@@ -188,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// Manejo de fechas
 document.addEventListener("DOMContentLoaded", function () {
     const fechaSelect = document.getElementById("fecha");
     const fechaRealInput = document.getElementById("fecha_real");
@@ -201,20 +200,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (this.value === "hoy") {
             fechaFormateada = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
-            fechaPersonalizadaContainer.style.display = "none"; // Ocultar campo personalizado
+            fechaPersonalizadaContainer.style.display = "none"; 
+            fechaRealInput.value = fechaFormateada; // Guardar fecha de hoy
         } else if (this.value === "ayer") {
             const ayer = new Date(hoy);
             ayer.setDate(hoy.getDate() - 1);
             fechaFormateada = `${String(ayer.getDate()).padStart(2, '0')}/${String(ayer.getMonth() + 1).padStart(2, '0')}/${ayer.getFullYear()}`;
-            fechaPersonalizadaContainer.style.display = "none";
+            fechaPersonalizadaContainer.style.display = "none"; 
+            fechaRealInput.value = fechaFormateada; // Guardar fecha de ayer
         } else if (this.value === "personalizado") {
             fechaPersonalizadaContainer.style.display = "block"; // Mostrar campo personalizado
+            fechaRealInput.value = ""; // Limpiar el input oculto para evitar que guarde "personalizado"
         }
-
-        fechaRealInput.value = fechaFormateada;
     });
 
     fechaPersonalizadaInput.addEventListener("input", function () {
-        fechaRealInput.value = this.value; // Guardar la fecha personalizada en `fecha_real`
+        if (fechaSelect.value === "personalizado") {
+            fechaRealInput.value = this.value; // Guardar la fecha personalizada
+        }
     });
 });
