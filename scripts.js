@@ -221,12 +221,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Evento para enviar el formulario de egresos
 document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const formData = new FormData(this);
-    const datos = Object.fromEntries(formData.entries());
+    // Crear un objeto con los datos del formulario
+    const datos = {
+        tipo: 'egresos',
+        fecha_real: document.getElementById('fecha_real').value,
+        descripcion: document.getElementById('descripcion').value,
+        categoria: document.getElementById('categoria').value,
+        subcategoria: document.getElementById('subcategoria').value,
+        monto: document.getElementById('monto').value,
+        metodo_pago: document.getElementById('metodo_pago').value,
+        imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
+    };
 
     console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
 
@@ -240,20 +248,23 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
     }
 });
 
-// Evento para enviar el formulario de ingresos
 document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const formData = new FormData(this);
-    const imagenInput = document.getElementById('imagen');
-    const datos = Object.fromEntries(formData.entries());
+    // Crear un objeto con los datos del formulario
+    const datos = {
+        tipo: 'ingresos',
+        fecha_real: document.getElementById('fecha_real').value,
+        descripcion: document.getElementById('descripcion').value,
+        codigoVendedor: document.getElementById('codigoVendedor').value,
+        monto: document.getElementById('monto').value,
+        metodo_pago: document.getElementById('metodo_pago').value,
+        imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
+    };
+
+    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
 
     try {
-        if (imagenInput?.files.length > 0) {
-            const imagenUrl = await uploadImageToCloudinary(imagenInput.files[0]);
-            datos.imagen_url = imagenUrl;
-        }
-
         const resultado = await enviarDatos('ingresos', datos);
         alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
         this.reset(); // Limpiar el formulario
