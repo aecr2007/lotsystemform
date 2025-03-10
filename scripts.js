@@ -130,42 +130,51 @@ async function uploadImageToCloudinary(file) {
     }
 }
 
-// Evento para enviar el formulario de egresos
-document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+    cargarCategorias();
 
-    const formData = new FormData(this);
-    const datos = Object.fromEntries(formData.entries());
+    document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-    try {
-        const resultado = await enviarDatos('egresos', datos);
-        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
-    } catch (error) {
-        alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
-    }
-});
+        const formData = new FormData(this);
+        const datos = Object.fromEntries(formData.entries());
 
-// Evento para enviar el formulario de ingresos
-document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
-    e.preventDefault();
+        console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
 
-    const formData = new FormData(this);
-    const imagenInput = document.getElementById('imagen');
-    const datos = Object.fromEntries(formData.entries());
-
-    try {
-        if (imagenInput.files.length > 0) {
-            const imagenUrl = await uploadImageToCloudinary(imagenInput.files[0]);
-            datos.imagen_url = imagenUrl;
+        try {
+            const resultado = await enviarDatos('egresos', datos);
+            alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
+        } catch (error) {
+            alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
         }
+    });
 
-        const resultado = await enviarDatos('ingresos', datos);
-        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
-        this.reset(); // Limpiar el formulario
-    } catch (error) {
-        alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
-    }
+    document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const imagenInput = document.getElementById('imagen');
+        const datos = Object.fromEntries(formData.entries());
+
+        try {
+            if (imagenInput?.files.length > 0) {
+                const imagenUrl = await uploadImageToCloudinary(imagenInput.files[0]);
+                datos.imagen_url = imagenUrl;
+            }
+
+            const resultado = await enviarDatos('ingresos', datos);
+            alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
+            this.reset(); // Limpiar el formulario
+        } catch (error) {
+            alert('❌ Hubo un problema al enviar los datos.');
+        }
+    });
+
+    document.getElementById('categoria')?.addEventListener('change', function () {
+        cargarSubcategorias(this.value);
+    });
 });
+
 
 // Cargar categorías al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
