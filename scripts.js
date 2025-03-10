@@ -175,42 +175,43 @@ document.addEventListener("DOMContentLoaded", function () {
         return `${String(fecha.getDate()).padStart(2, '0')}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${fecha.getFullYear()}`;
     }
 
-    // Actualizar fecha_real cuando cambia la selección
-    fechaSelect.addEventListener("change", function () {
+    function actualizarFechaReal() {
         const hoy = new Date();
+        let nuevaFecha = "";
 
-        if (this.value === "hoy") {
-            fechaRealInput.value = obtenerFechaFormateada(hoy);
+        if (fechaSelect.value === "hoy") {
+            nuevaFecha = obtenerFechaFormateada(hoy);
             fechaPersonalizadaContainer.style.display = "none";
-        } else if (this.value === "ayer") {
-            const ayer = new Date();
+        } else if (fechaSelect.value === "ayer") {
+            const ayer = new Date(hoy);
             ayer.setDate(hoy.getDate() - 1);
-            fechaRealInput.value = obtenerFechaFormateada(ayer);
+            nuevaFecha = obtenerFechaFormateada(ayer);
             fechaPersonalizadaContainer.style.display = "none";
-        } else if (this.value === "personalizado") {
+        } else if (fechaSelect.value === "personalizado") {
             fechaPersonalizadaContainer.style.display = "block";
-            fechaRealInput.value = ""; // No almacenar "personalizado"
+            return; // No modificar fecha_real aún
         }
-    });
 
-    // Actualizar fecha_real cuando se ingresa una fecha personalizada
+        fechaRealInput.value = nuevaFecha;
+    }
+
+    fechaSelect.addEventListener("change", actualizarFechaReal);
+
     fechaPersonalizadaInput.addEventListener("input", function () {
-        if (fechaSelect.value === "personalizado") {
-            const fecha = new Date(this.value);
+        if (fechaSelect.value === "personalizado" && this.value) {
+            const fecha = new Date(this.value + "T00:00:00"); // Evita desfase horario
             fechaRealInput.value = obtenerFechaFormateada(fecha);
         }
     });
 
-    // Verificar que la fecha no esté vacía antes de enviar el formulario
     document.querySelector("form").addEventListener("submit", function (e) {
         if (!fechaRealInput.value) {
             alert("Por favor, selecciona una fecha válida.");
             e.preventDefault();
-        } else {
-            console.log("Fecha enviada:", fechaRealInput.value); // Depuración
         }
     });
 });
+
 
 
 // Evento para enviar el formulario de egresos
