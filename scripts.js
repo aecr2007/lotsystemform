@@ -149,32 +149,20 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-const form = document.querySelector("form");
-form.addEventListener("submit", function (e) {
-    e.preventDefault(); // Evita el envío automático del formulario
-
-    const formData = new FormData(form);
-
-    fetch(form.action, {
-        method: "POST",
-        body: formData,
-    })
-    .then(response => response.text())
-    .then(data => console.log("Respuesta:", data))
-    .catch(error => console.error("Error:", error));
-});
-
 
 document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
     const fechaSelect = document.getElementById("fecha");
     const fechaRealInput = document.getElementById("fecha_real");
     const fechaPersonalizadaContainer = document.getElementById("fecha_personalizada_container");
     const fechaPersonalizadaInput = document.getElementById("fecha_personalizada");
 
+    // Función para formatear la fecha como dd/mm/aaaa
     function obtenerFechaFormateada(fecha) {
         return `${String(fecha.getDate()).padStart(2, '0')}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${fecha.getFullYear()}`;
     }
 
+    // Función para actualizar la fecha_real según la selección
     function actualizarFechaReal() {
         const hoy = new Date();
         let nuevaFecha = "";
@@ -195,8 +183,10 @@ document.addEventListener("DOMContentLoaded", function () {
         fechaRealInput.value = nuevaFecha;
     }
 
+    // Actualiza fecha_real cuando se cambia la opción de fecha
     fechaSelect.addEventListener("change", actualizarFechaReal);
 
+    // Actualiza fecha_real con la fecha personalizada si se ingresa
     fechaPersonalizadaInput.addEventListener("input", function () {
         if (fechaSelect.value === "personalizado" && this.value) {
             const fecha = new Date(this.value + "T00:00:00"); // Evita desfase horario
@@ -204,17 +194,32 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    document.querySelector("form").addEventListener("submit", function (e) {
+    // Prevent default form submit if fecha_real is not set
+    form.addEventListener("submit", function (e) {
         if (!fechaRealInput.value) {
             alert("Por favor, selecciona una fecha válida.");
             e.preventDefault();
         }
     });
-});
-document.querySelector("form").addEventListener("submit", function (e) {
-    console.log("Fecha a enviar:", fechaRealInput.value);
-});
 
+    // Envío del formulario
+    form.addEventListener("submit", function (e) {
+        e.preventDefault(); // Evita el envío automático del formulario
+
+        // Verifica si la fecha está correctamente definida
+        console.log("Fecha a enviar:", fechaRealInput.value);
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.text())
+        .then(data => console.log("Respuesta:", data))
+        .catch(error => console.error("Error:", error));
+    });
+});
 
 // Evento para enviar el formulario de egresos
 document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
