@@ -236,6 +236,7 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
         tipo: 'egresos',
         fecha_real: document.getElementById('fecha_real').value,
         descripcion: document.getElementById('descripcion').value,
+        vendedor: document.getElementById('vendedor').value, // Aquí está el campo
         categoria: document.getElementById('categoria').value,
         subcategoria: document.getElementById('subcategoria').value,
         monto: document.getElementById('monto').value,
@@ -243,7 +244,7 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
         imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
     };
 
-    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
+    console.log('Datos antes de enviar:', datos); // Verifica que "vendedor" esté presente
 
     try {
         const resultado = await enviarDatos('egresos', datos);
@@ -263,13 +264,13 @@ document.getElementById('ingresosForm')?.addEventListener('submit', async functi
         tipo: 'ingresos',
         fecha_real: document.getElementById('fecha_real').value,
         descripcion: document.getElementById('descripcion').value,
-        codigoVendedor: document.getElementById('codigoVendedor').value,
+        codigoVendedor: document.getElementById('codigoVendedor').value, // Aquí está el campo
         monto: document.getElementById('monto').value,
         metodo_pago: document.getElementById('metodo_pago').value,
         imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
     };
 
-    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté presente
+    console.log('Datos antes de enviar:', datos); // Verifica que "codigoVendedor" esté presente
 
     try {
         const resultado = await enviarDatos('ingresos', datos);
