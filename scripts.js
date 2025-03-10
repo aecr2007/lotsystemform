@@ -188,6 +188,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
+const form = document.querySelector("form");
+form.addEventListener("submit", function (e) {
+    e.preventDefault(); // Evita el envío automático del formulario
+
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: "POST",
+        body: formData,
+    })
+    .then(response => response.text())
+    .then(data => console.log("Respuesta:", data))
+    .catch(error => console.error("Error:", error));
+});
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const fechaSelect = document.getElementById("fecha");
     const fechaRealInput = document.getElementById("fecha_real");
@@ -228,4 +245,14 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault();
         }
     });
+});
+
+form.addEventListener("submit", function (e) {
+    console.log("Fecha enviada:", fechaRealInput.value);
+
+    if (!fechaRealInput.value) {
+        alert("Error: La fecha no puede estar vacía.");
+        e.preventDefault();
+        return;
+    }
 });
