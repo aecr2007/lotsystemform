@@ -43,18 +43,20 @@
             </div>
 
            <div class="form-group">
-                <label for="fecha">Fecha:</label>
-                <select id="fecha" name="fecha" required>
-                    <option value="hoy">Hoy</option>
-                    <option value="ayer">Ayer</option>
-                    <option value="personalizado">Personalizado</option>
-                </select>
-                <input type="hidden" id="fecha_real" name="fecha_real">
-            </div>
-            <div class="form-group" id="fecha_personalizada_container" style="display: none;">
-                <label for="fecha_personalizada">Fecha (dd/mm/aaaa):</label>
-                <input type="text" id="fecha_personalizada" name="fecha_personalizada" placeholder="dd/mm/aaaa">
-            </div>
+    <label for="fecha">Fecha:</label>
+    <select id="fecha" required>
+        <option value="hoy">Hoy</option>
+        <option value="ayer">Ayer</option>
+        <option value="personalizado">Personalizado</option>
+    </select>
+    <input type="hidden" id="fecha_real" name="fecha_real"> <!-- Aquí se almacena la fecha correcta -->
+</div>
+
+<div class="form-group" id="fecha_personalizada_container" style="display: none;">
+    <label for="fecha_personalizada">Fecha (dd/mm/aaaa):</label>
+    <input type="date" id="fecha_personalizada">
+</div>
+
 
             <div class="form-group">
                 <button type="submit">Enviar</button>

@@ -194,29 +194,38 @@ document.addEventListener("DOMContentLoaded", function () {
     const fechaPersonalizadaContainer = document.getElementById("fecha_personalizada_container");
     const fechaPersonalizadaInput = document.getElementById("fecha_personalizada");
 
+    function obtenerFechaFormateada(fecha) {
+        return `${String(fecha.getDate()).padStart(2, '0')}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${fecha.getFullYear()}`;
+    }
+
     fechaSelect.addEventListener("change", function () {
         const hoy = new Date();
-        let fechaFormateada = "";
 
         if (this.value === "hoy") {
-            fechaFormateada = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
-            fechaPersonalizadaContainer.style.display = "none"; 
-            fechaRealInput.value = fechaFormateada; // Guardar fecha de hoy
+            fechaRealInput.value = obtenerFechaFormateada(hoy);
+            fechaPersonalizadaContainer.style.display = "none";
         } else if (this.value === "ayer") {
-            const ayer = new Date(hoy);
+            const ayer = new Date();
             ayer.setDate(hoy.getDate() - 1);
-            fechaFormateada = `${String(ayer.getDate()).padStart(2, '0')}/${String(ayer.getMonth() + 1).padStart(2, '0')}/${ayer.getFullYear()}`;
-            fechaPersonalizadaContainer.style.display = "none"; 
-            fechaRealInput.value = fechaFormateada; // Guardar fecha de ayer
+            fechaRealInput.value = obtenerFechaFormateada(ayer);
+            fechaPersonalizadaContainer.style.display = "none";
         } else if (this.value === "personalizado") {
-            fechaPersonalizadaContainer.style.display = "block"; // Mostrar campo personalizado
-            fechaRealInput.value = ""; // Limpiar el input oculto para evitar que guarde "personalizado"
+            fechaPersonalizadaContainer.style.display = "block";
+            fechaRealInput.value = ""; // No almacenar "personalizado"
         }
     });
 
     fechaPersonalizadaInput.addEventListener("input", function () {
         if (fechaSelect.value === "personalizado") {
-            fechaRealInput.value = this.value; // Guardar la fecha personalizada
+            fechaRealInput.value = this.value.split("-").reverse().join("/"); // Formato dd/mm/yyyy
+        }
+    });
+
+    // Asegurar que se envíe la fecha correcta si está vacía
+    document.querySelector("form").addEventListener("submit", function (e) {
+        if (!fechaRealInput.value) {
+            alert("Por favor, selecciona una fecha válida.");
+            e.preventDefault();
         }
     });
 });
