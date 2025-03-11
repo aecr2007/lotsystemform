@@ -53,10 +53,10 @@ function limpiarFormulario(formId) {
 }
 
 // Función para cargar categorías dinámicamente
-async function cargarCategorias() {
+async function cargarCategorias(tipo) {
     try {
-        console.log('Cargando categorías...'); // Depuración
-        const response = await fetch(PROXY_URL + '?accion=categorias', {
+        console.log('Cargando categorías para:', tipo);
+        const response = await fetch(PROXY_URL + '?accion=categorias&tipo=' + tipo, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,44 +64,22 @@ async function cargarCategorias() {
             }
         });
 
-        console.log('Respuesta del proxy:', response.status, response.statusText); // Depuración
-
         if (!response.ok) {
             throw new Error(`Error al cargar categorías: ${response.status}`);
         }
 
-        const responseText = await response.text();
-        console.log('Respuesta del servidor (texto):', responseText); // Depuración
-
-        let categorias;
-        try {
-            categorias = JSON.parse(responseText); // Intenta parsear la respuesta como JSON
-        } catch (error) {
-            console.error('La respuesta no es un JSON válido:', responseText);
-            throw new Error('La respuesta del servidor no es un JSON válido.');
-        }
-
-        console.log('Categorías cargadas:', categorias); // Depuración
+        const categorias = await response.json();
+        console.log('Categorías cargadas:', categorias);
 
         const selectCategoria = document.getElementById('categoria');
         if (selectCategoria) {
-            if (Array.isArray(categorias)) {
-                categorias.forEach(categoria => {
-                    const option = document.createElement('option');
-                    option.value = categoria;
-                    option.textContent = categoria;
-                    selectCategoria.appendChild(option);
-                });
-            } else if (categorias.categorias && Array.isArray(categorias.categorias)) {
-                categorias.categorias.forEach(categoria => {
-                    const option = document.createElement('option');
-                    option.value = categoria;
-                    option.textContent = categoria;
-                    selectCategoria.appendChild(option);
-                });
-            } else {
-                console.error('La respuesta no contiene un array de categorías:', categorias);
-            }
+            selectCategoria.innerHTML = '<option value="" disabled selected>Seleccione una categoría</option>';
+            categorias.forEach(categoria => {
+                const option = document.createElement('option');
+                option.value = categoria;
+                option.textContent = categoria;
+                selectCategoria.appendChild(option);
+            });
         } else {
             console.error('El elemento con ID "categoria" no existe en el DOM.');
         }
@@ -110,37 +88,28 @@ async function cargarCategorias() {
     }
 }
 
-// Función para cargar subcategorías dinámicamente
-async function cargarSubcategorias(categoria) {
+async function cargarSubcategorias(tipo, categoria) {
     try {
-        const response = await fetch(PROXY_URL + '?accion=subcategorias&categoria=' + encodeURIComponent(categoria));
+        const response = await fetch(PROXY_URL + '?accion=subcategorias&tipo=' + tipo + '&categoria=' + encodeURIComponent(categoria));
         if (!response.ok) {
             throw new Error(`Error al cargar subcategorías: ${response.status}`);
         }
         const subcategorias = await response.json();
-        console.log('Subcategorías cargadas:', subcategorias); // Depuración
+        console.log('Subcategorías cargadas:', subcategorias);
 
         const selectSubcategoria = document.getElementById('subcategoria');
         if (selectSubcategoria) {
-            // Limpiar opciones anteriores
-            selectSubcategoria.innerHTML = '';
-
-            // Si no hay subcategorías, agregar una opción por defecto
-            if (subcategorias.length === 0) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No hay subcategorías';
-                selectSubcategoria.appendChild(option);
-                selectSubcategoria.disabled = true; // Deshabilitar el select si no hay subcategorías
-            } else {
-                // Si hay subcategorías, agregarlas al select
+            selectSubcategoria.innerHTML = '<option value="" disabled selected>No hay subcategorías</option>';
+            if (subcategorias.length > 0) {
                 subcategorias.forEach(subcategoria => {
                     const option = document.createElement('option');
                     option.value = subcategoria;
                     option.textContent = subcategoria;
                     selectSubcategoria.appendChild(option);
                 });
-                selectSubcategoria.disabled = false; // Habilitar el select si hay subcategorías
+                selectSubcategoria.disabled = false;
+            } else {
+                selectSubcategoria.disabled = true;
             }
         } else {
             console.error('El elemento con ID "subcategoria" no existe en el DOM.');
