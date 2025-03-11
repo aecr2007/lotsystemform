@@ -37,6 +37,21 @@ async function enviarDatos(tipo, datos) {
 }
 
 
+// Función para limpiar el formulario
+function limpiarFormulario(formId) {
+    const form = document.getElementById(formId);
+    if (form) {
+        form.reset();
+        // Restaurar placeholders
+        const selects = form.querySelectorAll('select');
+        selects.forEach(select => {
+            if (select.querySelector('option[disabled][selected]')) {
+                select.value = '';
+            }
+        });
+    }
+}
+
 // Función para cargar categorías dinámicamente
 async function cargarCategorias() {
     try {

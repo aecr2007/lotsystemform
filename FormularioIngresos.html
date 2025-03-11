@@ -22,6 +22,7 @@
             <div class="form-group">
                 <label for="metodo_pago">Método de pago:</label>
                 <select id="metodo_pago" name="metodo_pago" required>
+                    <option value="" disabled selected>Seleccione un método de pago</option>
                     <option value="bs">Bolívares</option>
                     <option value="usd">Dólares</option>
                 </select>
@@ -29,12 +30,12 @@
 
             <div class="form-group">
                 <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" required></textarea>
+                <input type="text" id="descripcion" name="descripcion" required>
             </div>
 
             <div class="form-group">
                 <label for="codigoVendedor">Código del vendedor:</label>
-                <input type="text" id="codigoVendedor" name="codigoVendedor" required>
+                <input type="text" id="codigoVendedor" name="codigoVendedor" placeholder="Ingrese un vendedor" required>
             </div>
 
             <div class="form-group">
@@ -50,6 +51,7 @@
             <div class="form-group">
                 <label for="fecha">Fecha:</label>
                 <select id="fecha" required>
+                    <option value="" disabled selected>Ingrese una fecha</option>
                     <option value="hoy">Hoy</option>
                     <option value="ayer">Ayer</option>
                     <option value="personalizado">Personalizado</option>
@@ -64,6 +66,7 @@
 
             <div class="form-group">
                 <button type="submit">Enviar</button>
+                <button type="button" id="cancelar">Cancelar</button>
             </div>
         </form>
     </div>
