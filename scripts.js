@@ -56,7 +56,16 @@ async function cargarCategorias() {
         }
 
         const responseText = await response.text();
-        const categorias = JSON.parse(responseText);
+        console.log('Respuesta del servidor (texto):', responseText); // Depuración
+
+        let categorias;
+        try {
+            categorias = JSON.parse(responseText); // Intenta parsear la respuesta como JSON
+        } catch (error) {
+            console.error('La respuesta no es un JSON válido:', responseText);
+            throw new Error('La respuesta del servidor no es un JSON válido.');
+        }
+
         console.log('Categorías cargadas:', categorias); // Depuración
 
         const selectCategoria = document.getElementById('categoria');
