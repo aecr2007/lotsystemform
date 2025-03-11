@@ -126,7 +126,7 @@ async function cargarSubcategorias(tipo, categoria) {
 async function uploadImageToCloudinary(file) {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET); // Reemplaza con tu Upload Preset
+    formData.append('ml_default', UPLOAD_PRESET); // Reemplaza con tu Upload Preset
 
     try {
         const response = await fetch(CLOUDINARY_URL, {
