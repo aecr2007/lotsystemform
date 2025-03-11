@@ -55,17 +55,29 @@ async function cargarCategorias() {
             throw new Error(`Error al cargar categorías: ${response.status}`);
         }
 
-        const categorias = await response.json();
+        const responseText = await response.text();
+        const categorias = JSON.parse(responseText);
         console.log('Categorías cargadas:', categorias); // Depuración
 
         const selectCategoria = document.getElementById('categoria');
         if (selectCategoria) {
-            categorias.forEach(categoria => {
-                const option = document.createElement('option');
-                option.value = categoria;
-                option.textContent = categoria;
-                selectCategoria.appendChild(option);
-            });
+            if (Array.isArray(categorias)) {
+                categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria;
+                    option.textContent = categoria;
+                    selectCategoria.appendChild(option);
+                });
+            } else if (categorias.categorias && Array.isArray(categorias.categorias)) {
+                categorias.categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria;
+                    option.textContent = categoria;
+                    selectCategoria.appendChild(option);
+                });
+            } else {
+                console.error('La respuesta no contiene un array de categorías:', categorias);
+            }
         } else {
             console.error('El elemento con ID "categoria" no existe en el DOM.');
         }
