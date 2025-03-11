@@ -1,6 +1,6 @@
 // URLs y configuraciones
 const PROXY_URL = 'https://proxy-web-lwr4.onrender.com/api'; // Usar el proxy
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dh9szo3si/upload'; // Reemplaza con tu Cloud Name
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dmo3qj5u6/upload'; // Reemplaza con tu Cloud Name
 const UPLOAD_PRESET = 'ml_default'; // Reemplaza con tu Upload Preset
 
 // Función para enviar datos al Google Apps Script a través del proxy
@@ -220,6 +220,13 @@ document.addEventListener("DOMContentLoaded", function () {
 document.getElementById('egresosForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
 
+    // Subir la imagen a Cloudinary (si existe)
+    let imagenUrl = 'Sin imagen';
+    const imagenInput = document.getElementById('imagen').files[0];
+    if (imagenInput) {
+        imagenUrl = await uploadImageToCloudinary(imagenInput);
+    }
+
     // Crear un objeto con los datos del formulario
     const datos = {
         tipo: 'egresos',
@@ -230,7 +237,7 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
         subcategoria: document.getElementById('subcategoria').value,
         monto: document.getElementById('monto').value,
         metodo_pago: document.getElementById('metodo_pago').value,
-        imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
+        imagen: imagenUrl // Incluir la URL de la imagen
     };
 
     try {
@@ -257,6 +264,20 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
 document.getElementById('ingresosAdmForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
 
+    // Subir la imagen a Cloudinary (si existe)
+    let imagenUrl = 'Sin imagen'; // Valor por defecto
+    const imagenInput = document.getElementById('imagen').files[0];
+    if (imagenInput) {
+        try {
+            imagenUrl = await uploadImageToCloudinary(imagenInput); // Subir la imagen y obtener la URL
+            console.log('Imagen subida a Cloudinary. URL:', imagenUrl);
+        } catch (error) {
+            console.error('Error al subir la imagen a Cloudinary:', error);
+            alert('❌ Hubo un problema al subir la imagen. Intenta de nuevo.');
+            return; // Detener el envío del formulario si hay un error
+        }
+    }
+
     // Crear un objeto con los datos del formulario
     const datos = {
         tipo: 'ingresosAdm', // Asegúrate de que el tipo sea correcto
@@ -267,7 +288,7 @@ document.getElementById('ingresosAdmForm')?.addEventListener('submit', async fun
         subcategoria: document.getElementById('subcategoria').value,
         monto: document.getElementById('monto').value,
         metodo_pago: document.getElementById('metodo_pago').value,
-        imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
+        imagen: imagenUrl // Incluir la URL de la imagen
     };
 
     console.log('Datos antes de enviar:', datos); // Verifica que todos los campos estén presentes
@@ -290,6 +311,7 @@ document.getElementById('ingresosAdmForm')?.addEventListener('submit', async fun
         this.reset(); // Limpiar el formulario
         document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
     } catch (error) {
+        console.error('Error al enviar los datos:', error);
         alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
     }
 });
