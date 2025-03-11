@@ -68,7 +68,10 @@ async function cargarCategorias(tipo) {
             throw new Error(`Error al cargar categorías: ${response.status}`);
         }
 
-        const categorias = await response.json();
+        const textData = await response.text(); // Obtener la respuesta como texto
+        console.log('Respuesta del servidor:', textData); // Depuración
+
+        const categorias = JSON.parse(textData); // Convertir a JSON
         console.log('Categorías cargadas:', categorias);
 
         const selectCategoria = document.getElementById('categoria');
@@ -87,7 +90,6 @@ async function cargarCategorias(tipo) {
         console.error('Error al cargar categorías:', error);
     }
 }
-
 // Función para cargar subcategorías dinámicamente
 async function cargarSubcategorias(tipo, categoria) {
     try {
