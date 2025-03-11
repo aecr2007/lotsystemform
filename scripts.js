@@ -315,3 +315,56 @@ document.getElementById('ingresosAdmForm')?.addEventListener('submit', async fun
         alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
     }
 });
+
+document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Subir la imagen a Cloudinary (si existe)
+    let imagenUrl = 'Sin imagen';
+    const imagenInput = document.getElementById('imagen').files[0];
+    if (imagenInput) {
+        try {
+            imagenUrl = await uploadImageToCloudinary(imagenInput); // Subir la imagen y obtener la URL
+            console.log('Imagen subida a Cloudinary. URL:', imagenUrl);
+        } catch (error) {
+            console.error('Error al subir la imagen a Cloudinary:', error);
+            alert('❌ Hubo un problema al subir la imagen. Intenta de nuevo.');
+            return; // Detener el envío del formulario si hay un error
+        }
+    }
+
+    // Crear un objeto con los datos del formulario
+    const datos = {
+        tipo: 'ingresos', // Tipo de formulario (ingresos)
+        fecha_real: document.getElementById('fecha_real').value, // Formato aaaa-mm-dd
+        descripcion: document.getElementById('descripcion').value,
+        codigoVendedor: document.getElementById('codigoVendedor').value,
+        monto: document.getElementById('monto').value,
+        metodo_pago: document.getElementById('metodo_pago').value,
+        imagen: imagenUrl // Incluir la URL de la imagen
+    };
+
+    console.log('Datos antes de enviar:', datos); // Verifica que todos los campos estén presentes
+
+    try {
+        const response = await fetch(PROXY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al enviar los datos');
+        }
+
+        const resultado = await response.json();
+        alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
+        this.reset(); // Limpiar el formulario
+        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
+    } catch (error) {
+        console.error('Error al enviar los datos:', error);
+        alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
+    }
+});
