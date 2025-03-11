@@ -230,25 +230,33 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
 
     // Crear un objeto con los datos del formulario
     const datos = {
-    tipo: 'egresos',
-    fecha_real: document.getElementById('fecha_real').value, // Ahora tomará el valor ingresado
-    descripcion: document.getElementById('descripcion').value,
-    vendedor: document.getElementById('vendedor').value,
-    categoria: document.getElementById('categoria').value,
-    subcategoria: document.getElementById('subcategoria').value,
-    monto: document.getElementById('monto').value,
-    metodo_pago: document.getElementById('metodo_pago').value,
-    imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
-};
-
-
-    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté en formato aaaa-mm-dd
+        tipo: 'egresos',
+        fecha_real: document.getElementById('fecha_real').value,
+        descripcion: document.getElementById('descripcion').value,
+        vendedor: document.getElementById('vendedor').value,
+        categoria: document.getElementById('categoria').value,
+        subcategoria: document.getElementById('subcategoria').value,
+        monto: document.getElementById('monto').value,
+        metodo_pago: document.getElementById('metodo_pago').value,
+        imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
+    };
 
     try {
-        const resultado = await enviarDatos('egresos', datos);
+        const response = await fetch(PROXY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al enviar los datos');
+        }
+
+        const resultado = await response.json();
         alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
         this.reset(); // Limpiar el formulario
-        document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
     } catch (error) {
         alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
     }
