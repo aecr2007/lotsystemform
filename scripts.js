@@ -37,7 +37,7 @@ async function enviarDatos(tipo, datos) {
 }
 
 
-// Función para cargasr categorías dinámicamente
+// Función para cargar categorías dinámicamente
 async function cargarCategorias() {
     try {
         console.log('Cargando categorías...'); // Depuración
@@ -209,17 +209,16 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
 
     // Crear un objeto con los datos del formulario
     const datos = {
-    tipo: 'egresos',
-    fecha_real: document.getElementById('fecha_real').value, // Ahora tomará el valor ingresado
-    descripcion: document.getElementById('descripcion').value,
-    vendedor: document.getElementById('vendedor').value,
-    categoria: document.getElementById('categoria').value,
-    subcategoria: document.getElementById('subcategoria').value,
-    monto: document.getElementById('monto').value,
-    metodo_pago: document.getElementById('metodo_pago').value,
-    imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
-};
-
+        tipo: 'egresos',
+        fecha_real: '2025/03/09', // Fecha fija para pruebas
+        descripcion: document.getElementById('descripcion').value,
+        vendedor: document.getElementById('vendedor').value,
+        categoria: document.getElementById('categoria').value,
+        subcategoria: document.getElementById('subcategoria').value,
+        monto: document.getElementById('monto').value,
+        metodo_pago: document.getElementById('metodo_pago').value,
+        imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
+    };
 
     console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté en formato aaaa-mm-dd
 
