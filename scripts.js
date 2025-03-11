@@ -338,7 +338,7 @@ document.getElementById('ingresosForm')?.addEventListener('submit', async functi
         tipo: 'ingresos', // Tipo de formulario (ingresos)
         fecha_real: document.getElementById('fecha_real').value, // Formato aaaa-mm-dd
         descripcion: document.getElementById('descripcion').value,
-        codigoVendedor: document.getElementById('codigoVendedor').value,
+        vendedor: document.getElementById('vendedor').value,
         monto: document.getElementById('monto').value,
         metodo_pago: document.getElementById('metodo_pago').value,
         imagen: imagenUrl // Incluir la URL de la imagen
