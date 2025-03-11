@@ -88,6 +88,7 @@ async function cargarCategorias(tipo) {
     }
 }
 
+// Función para cargar subcategorías dinámicamente
 async function cargarSubcategorias(tipo, categoria) {
     try {
         const response = await fetch(PROXY_URL + '?accion=subcategorias&tipo=' + tipo + '&categoria=' + encodeURIComponent(categoria));
@@ -147,13 +148,18 @@ async function uploadImageToCloudinary(file) {
 
 // Cargar categorías al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
-    cargarCategorias();
+    // Obtener el tipo de formulario
+    const tipoFormulario = document.getElementById('tipoFormulario').value;
+
+    // Cargar categorías según el tipo de formulario
+    cargarCategorias(tipoFormulario);
 
     const selectCategoria = document.getElementById('categoria');
     if (selectCategoria) {
         // Cargar subcategorías cuando se selecciona una categoría
         selectCategoria.addEventListener('change', function () {
-            cargarSubcategorias(this.value);
+            const categoriaSeleccionada = this.value;
+            cargarSubcategorias(tipoFormulario, categoriaSeleccionada);
         });
     } else {
         console.error('El elemento con ID "categoria" no existe en el DOM.');
@@ -246,28 +252,42 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
     }
 });
 
-document.getElementById('ingresosForm')?.addEventListener('submit', async function (e) {
+document.getElementById('ingresosAdmForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
 
     // Crear un objeto con los datos del formulario
     const datos = {
-        tipo: 'ingresos',
+        tipo: 'ingresosAdm', // Asegúrate de que el tipo sea correcto
         fecha_real: document.getElementById('fecha_real').value, // Formato aaaa-mm-dd
         descripcion: document.getElementById('descripcion').value,
-        codigoVendedor: document.getElementById('codigoVendedor').value,
+        vendedor: document.getElementById('vendedor').value,
+        categoria: document.getElementById('categoria').value,
+        subcategoria: document.getElementById('subcategoria').value,
         monto: document.getElementById('monto').value,
         metodo_pago: document.getElementById('metodo_pago').value,
         imagen: document.getElementById('imagen').files[0] ? await uploadImageToCloudinary(document.getElementById('imagen').files[0]) : 'Sin imagen'
     };
 
-    console.log('Datos antes de enviar:', datos); // Verifica que "fecha_real" esté en formato aaaa-mm-dd
+    console.log('Datos antes de enviar:', datos); // Verifica que todos los campos estén presentes
 
     try {
-        const resultado = await enviarDatos('ingresos', datos);
+        const response = await fetch(PROXY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al enviar los datos');
+        }
+
+        const resultado = await response.json();
         alert('✅ Datos enviados correctamente.\n\n' + JSON.stringify(resultado));
         this.reset(); // Limpiar el formulario
         document.getElementById('fecha_personalizada_container').style.display = 'none'; // Ocultar campo personalizado
     } catch (error) {
-        alert('❌ Hubo un problema al enviar los datos.');
+        alert('❌ Hubo un problema al enviar los datos. Intenta de nuevo.');
     }
 });
