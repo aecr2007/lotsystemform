@@ -37,7 +37,7 @@ async function enviarDatos(tipo, datos) {
 }
 
 
-// Función para cargar categorías dinámicamente
+// Función para cargasr categorías dinámicamente
 async function cargarCategorias() {
     try {
         console.log('Cargando categorías...'); // Depuración
