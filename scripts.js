@@ -231,8 +231,9 @@ document.getElementById('egresosForm')?.addEventListener('submit', async functio
     // Crear un objeto con los datos del formulario
     const datos = {
     tipo: 'egresos',
-    fecha_real: document.getElementById('fecha_real').value, // Ahora tomará el valor ingresado
+    
     descripcion: document.getElementById('descripcion').value,
+    fecha_real: document.getElementById('fecha_real').value, // Ahora tomará el valor ingresado
     vendedor: document.getElementById('vendedor').value,
     categoria: document.getElementById('categoria').value,
     subcategoria: document.getElementById('subcategoria').value,
